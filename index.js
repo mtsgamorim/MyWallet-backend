@@ -32,7 +32,7 @@ app.post("/cadastro", async (req, res) => {
 
   const validation = userSchema.validate(user);
   if (validation.error) {
-    res.status(400).send("Campos invalidos para cadastro");
+    res.status(422).send("Campos invalidos para cadastro");
     return;
   }
 
@@ -49,6 +49,40 @@ app.post("/cadastro", async (req, res) => {
     res.sendStatus(201);
   } catch (error) {
     res.sendStatus(500);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  const user = req.body;
+
+  const userSchema = joi.object({
+    email: joi.string().email().required(),
+    password: joi.string().required(),
+  });
+  const validation = userSchema.validate(user);
+  if (validation.error) {
+    res.status(422).send("Campos Invalidos");
+    return;
+  }
+
+  const userNoBanco = await db
+    .collection("users")
+    .findOne({ email: user.email });
+  if (userNoBanco && bcrypt.compareSync(user.password, userNoBanco.password)) {
+    const token = uuid();
+
+    await db
+      .collection("sessions")
+      .deleteOne({ userId: new ObjectId(userNoBanco._id) });
+
+    await db.collection("sessions").insertOne({
+      token,
+      userId: userNoBanco._id,
+    });
+    res.status(201).send({ token });
+    return;
+  } else {
+    res.status(401).send("Email ou senha incorreto");
   }
 });
 
