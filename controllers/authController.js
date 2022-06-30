@@ -71,7 +71,10 @@ export async function loginUser(req, res) {
       token,
       userId: userNoBanco._id,
     });
-    res.status(201).send({ token });
+    res.status(201).send({
+      name: userNoBanco.name,
+      token,
+    });
     return;
   } else {
     res.status(401).send("Email ou senha incorreto");
