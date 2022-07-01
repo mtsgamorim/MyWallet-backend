@@ -1,32 +1,11 @@
-import { MongoClient, ObjectId } from "mongodb";
-import dotenv from "dotenv";
+import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import joi from "joi";
 import { v4 as uuid } from "uuid";
-
-dotenv.config();
-
-const mongoClient = new MongoClient(process.env.MONGO_URI);
-let db;
-
-mongoClient.connect().then(() => {
-  db = mongoClient.db(process.env.MONGO_DATABASE);
-});
+import { db } from "../mongo/mongo.js";
 
 export async function createUser(req, res) {
   const user = req.body;
-
-  const userSchema = joi.object({
-    name: joi.string().required(),
-    email: joi.string().email().required(),
-    password: joi.string().required(),
-  });
-
-  const validation = userSchema.validate(user);
-  if (validation.error) {
-    res.status(422).send("Campos invalidos para cadastro");
-    return;
-  }
 
   try {
     const temUserIgual = await db
@@ -74,6 +53,7 @@ export async function loginUser(req, res) {
     res.status(201).send({
       name: userNoBanco.name,
       token,
+      userId: userNoBanco._id,
     });
     return;
   } else {
