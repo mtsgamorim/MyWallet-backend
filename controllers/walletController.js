@@ -8,7 +8,8 @@ export async function walletReceber(req, res) {
   try {
     const temValores = await db
       .collection("wallet")
-      .findOne({ userId: new ObjectId(id) });
+      .find({ userId: new ObjectId(id) })
+      .toArray();
     res.status(200).send(temValores);
   } catch (error) {
     res.sendStatus(500);
