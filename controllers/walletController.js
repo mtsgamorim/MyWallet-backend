@@ -10,7 +10,11 @@ export async function walletReceber(req, res) {
       .collection("wallet")
       .find({ userId: new ObjectId(id) })
       .toArray();
-    res.status(200).send(temValores);
+    if (temValores.length > 0) {
+      res.status(200).send(temValores);
+    } else {
+      res.sendStatus(404);
+    }
   } catch (error) {
     res.sendStatus(500);
   }
