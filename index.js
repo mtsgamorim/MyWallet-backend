@@ -15,6 +15,6 @@ app.use(json());
 app.use(authRouter);
 app.use(walletRouter);
 
-app.listen(process.env.PORT || 5000, () => {
+app.listen(process.env.PORT, () => {
   console.log(chalk.bold.blue("Servidor funcionando"));
 });
