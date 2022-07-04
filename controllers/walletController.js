@@ -13,7 +13,7 @@ export async function walletReceber(req, res) {
     if (temValores.length > 0) {
       res.status(200).send(temValores);
     } else {
-      res.sendStatus(404);
+      res.send([]);
     }
   } catch (error) {
     res.sendStatus(500);
